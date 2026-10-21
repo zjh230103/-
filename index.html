@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="rl6nwBL5lpHRCQMEEnrZeW">
+<head data-page-node-id="Qv48Iq2XmSFShqQfVNqGyq">
+<meta charset="UTF-8" data-page-node-id="tnylmPnxDw9ugclmg1JYzK">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" data-page-node-id="7AWqy1QWHmQZsNjvWmcG5X">
+<title>战略FP&A 个人工作台</title>
+<style>
+  :root{
+    --bg:#101820;
+    --panel:#151f2b;
+    --card:#1a2634;
+    --card2:#1f2d3d;
+    --line:#27374a;
+    --text:#e8eef4;
+    --sub:#93a3b3;
+    --teal:#54dcb5;
+    --amber:#ffbd69;
+    --red:#ff6b6b;
+    --green:#4ade80;
+    --blue:#6aa8ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{background:var(--bg);}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.55;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 14px;}
+  svg{display:block;max-width:100%;}
+  button{font-family:inherit;}
+  input,select,textarea{
+    width:100%;font-size:16px;padding:11px 12px;border-radius:10px;
+    border:1px solid var(--line);background:var(--bg);color:var(--text);
+    outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--teal);}
+  input::placeholder,textarea::placeholder{color:#5d6e80;}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px;}
+
+  /* ============ 顶栏 ============ */
+  .topbar{
+    padding:16px 0 10px;border-bottom:1px solid var(--line);
+    margin-bottom:14px;
+  }
+  .topbar h1{font-size:20px;font-weight:700;letter-spacing:.5px;}
+  .topbar h1 em{font-style:normal;color:var(--teal);}
+  .topbar .meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+  .topbar .date{color:var(--sub);font-size:13px;}
+  .savestate{font-size:12px;color:var(--sub);}
+  .savestate b{color:var(--teal);font-weight:600;}
+
+  /* ============ 今日待办（置顶） ============ */
+  .today{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,var(--bg) 85%,rgba(16,24,32,0));
+    padding:8px 0 14px;
+  }
+  .today-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);
+    max-height:46vh;overflow-y:auto;
+  }
+  .sec-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .sec-head .ic{flex:0 0 auto;}
+  .sec-head h2{font-size:16px;font-weight:700;flex:1;}
+  .badge-count{font-size:12px;background:var(--card2);border:1px solid var(--line);color:var(--amber);border-radius:999px;padding:2px 10px;}
+  .task-row{
+    display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;
+    border:1px solid transparent;
+  }
+  .task-row + .task-row{border-top:1px dashed var(--line);}
+  .task-row.overdue{border:1px solid rgba(255,107,107,.45);background:rgba(255,107,107,.08);}
+  .task-row.done{opacity:.45;}
+  .task-row.done .t-title{text-decoration:line-through;}
+  .t-check{
+    flex:0 0 44px;height:44px;min-width:44px;border-radius:12px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--sub);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .task-row.done .t-check{background:rgba(84,220,181,.15);border-color:var(--teal);color:var(--teal);}
+  .t-body{flex:1;min-width:0;}
+  .t-title{font-size:14.5px;}
+  .t-sub{font-size:12px;color:var(--sub);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;}
+  .tag-overdue{color:var(--red);font-weight:600;}
+  .tag-rolled{color:var(--amber);}
+  .t-del{flex:0 0 44px;height:44px;min-width:44px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--sub);cursor:pointer;font-size:16px;}
+  .t-del:active{border-color:var(--red);color:var(--red);}
+  .add-line{display:flex;gap:8px;margin-top:10px;}
+  .add-line input{flex:1;}
+  .add-line input[type=date]{flex:0 0 150px;}
+  .btn{
+    min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--teal);
+    background:rgba(84,220,181,.12);color:var(--teal);font-size:15px;font-weight:600;
+    cursor:pointer;white-space:nowrap;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-ghost{border-color:var(--line);background:var(--card);color:var(--text);}
+  .btn-amber{border-color:var(--amber);background:rgba(255,189,105,.12);color:var(--amber);}
+  .btn-red{border-color:var(--red);background:rgba(255,107,107,.12);color:var(--red);}
+  .btn-sm{min-height:44px;padding:8px 14px;font-size:13.5px;}
+
+  /* ============ 模块卡片 ============ */
+  .module{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px;margin:14px 0;
+  }
+  .module .desc{font-size:12.5px;color:var(--sub);margin:-4px 0 12px;}
+  .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;}
+  .kpi .k-label{font-size:11.5px;color:var(--sub);}
+  .kpi .k-val{font-size:17px;font-weight:700;margin-top:2px;}
+  .chart-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px;overflow-x:auto;}
+  .rows{display:flex;flex-direction:column;gap:8px;}
+  .data-row{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  }
+  .data-row.alert{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.06);}
+  .data-row .r-head{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .data-row .r-name{font-weight:600;font-size:14.5px;}
+  .data-row .r-flags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--sub);white-space:nowrap;}
+  .pill.red{color:var(--red);border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.1);}
+  .pill.green{color:var(--green);border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.08);}
+  .pill.teal{color:var(--teal);border-color:rgba(84,220,181,.4);background:rgba(84,220,181,.08);}
+  .pill.amber{color:var(--amber);border-color:rgba(255,189,105,.4);background:rgba(255,189,105,.08);}
+  .data-row .r-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px 12px;margin-top:8px;}
+  .cell .c-label{font-size:11px;color:var(--sub);}
+  .cell .c-val{font-size:14px;font-weight:600;}
+  .num-neg{color:var(--red);}
+  .num-pos{color:var(--green);}
+  .r-actions{display:flex;gap:8px;margin-top:8px;justify-content:flex-end;}
+  .r-note{font-size:12.5px;color:var(--sub);margin-top:6px;border-top:1px dashed var(--line);padding-top:6px;}
+  .r-note b{color:var(--amber);font-weight:600;}
+
+  /* 抽屉表单 */
+  .drawer{display:none;margin-top:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .drawer.open{display:block;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+  .form-grid .full{grid-column:1 / -1;}
+  .form-actions{display:flex;gap:8px;margin-top:14px;}
+  .form-actions .btn{flex:1;}
+
+  .empty{color:var(--sub);font-size:13px;text-align:center;padding:16px 0;}
+
+  /* 测算结果卡 */
+  .calc-result{
+    display:none;margin-top:10px;background:var(--card);border:1px solid rgba(84,220,181,.4);
+    border-radius:12px;padding:12px;
+  }
+  .calc-result.show{display:block;}
+  .calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .calc-grid .kpi .k-val{font-size:15.5px;}
+
+  /* 分析要点 */
+  .insights{display:none;margin-top:12px;background:var(--card);border:1px solid rgba(255,189,105,.4);border-radius:12px;padding:12px;}
+  .insights.show{display:block;}
+  .insights h3{font-size:14px;color:var(--amber);margin-bottom:8px;}
+  .insights li{font-size:13.5px;margin:6px 0 6px 18px;color:var(--text);}
+  .insights li b{color:var(--teal);}
+  .insights li .adv{color:var(--sub);}
+
+  /* 敏感性矩阵 */
+  .sens-head{display:flex;align-items:center;gap:8px;margin:16px 0 4px;}
+  .sens-head h3{font-size:15px;font-weight:700;flex:1;color:var(--text);}
+  #sensPick{margin:6px 0 10px;}
+  .sens-table{border-collapse:collapse;width:100%;font-size:12px;min-width:540px;}
+  .sens-table th,.sens-table td{border:1px solid var(--line);padding:9px 6px;text-align:center;white-space:nowrap;}
+  .sens-table th{color:var(--sub);background:var(--card2);font-weight:600;font-size:12px;}
+  .sens-table th.corner{font-size:11px;line-height:1.35;}
+  .sens-table td.pos{color:var(--teal);background:rgba(84,220,181,.09);font-weight:600;}
+  .sens-table td.neg{color:var(--red);background:rgba(255,107,107,.09);font-weight:600;}
+  .sens-table td.base{outline:2px solid var(--amber);outline-offset:-2px;}
+  .sens-table td.hit{color:var(--teal);background:rgba(84,220,181,.10);font-weight:600;}
+  .sens-table td.miss{color:var(--red);background:rgba(255,107,107,.10);font-weight:600;}
+  .sens-table td .sub{display:block;font-size:10.5px;font-weight:500;opacity:.9;margin-top:1px;}
+  .sens-table td.ratecol{color:var(--amber);font-weight:700;background:var(--card2);}
+  .sens-table td.na{color:var(--sub);}
+  .irr-buffer{font-size:12.5px;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(84,220,181,.08);border:1px solid rgba(84,220,181,.3);color:var(--text);}
+  .irr-buffer b{color:var(--teal);}
+  .sens-legend{font-size:11.5px;color:var(--sub);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
+  .sens-legend b{color:var(--amber);font-weight:600;}
+
+  /* 备份区 */
+  .backup{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:14px;margin:14px 0 30px;}
+  .backup .b-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .backup .b-btns .btn{flex:1;min-width:140px;}
+  .foot{text-align:center;color:#5d6e80;font-size:12px;padding-bottom:10px;}
+
+  @media (max-width:420px){
+    .form-grid{grid-template-columns:1fr;}
+    .calc-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body data-page-node-id="L8ovm8C9zvBjSVJQGD7Di2">
+<div class="wrap" data-page-node-id="zOIyY5HPMelrbNV0tihCQb">
+
+  <!-- 顶栏 -->
+  <div class="topbar" data-page-node-id="F7AE9ZDNGqpmfDo2xmoVZj">
+    <h1 data-page-node-id="j4dlJiRyPPDeUvnSmkwvus">战略 <em data-page-node-id="imfnqaS3PxAIiugd8BEzlB">FP&amp;A</em> 工作台</h1>
+    <div class="meta" data-page-node-id="s8oGEcQA5cqKF4JyS1RnDI">
+      <span class="date" id="todayDate" data-page-node-id="OOpUtxO2MckqfXjhdfKd5C"></span>
+      <span class="savestate" id="saveState" data-page-node-id="074f77zb2xtS3eXNhd9YyE">数据存储：本地</span>
+    </div>
+  </div>
+
+  <!-- 今日待办（置顶固定） -->
+  <div class="today" data-page-node-id="CLBO1HgEc9J1Mqzzld2Kny">
+    <div class="today-card" data-page-node-id="eOUfsa3L1JoXIlugYvycAt">
+      <div class="sec-head" data-page-node-id="tKqiCevb94jOtgQ48xgN6t">
+        <span class="ic" data-page-node-id="nzoVeFwIIwcxLNHFN4ntuh">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffbd69" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="0kt4OSXzKfnw3U256Nx0zw"><circle cx="12" cy="12" r="9" data-page-node-id="lhKifOFOOPgmMG7nuP0LzC"/><polyline points="12 7 12 12 15.5 14" data-page-node-id="qBtxHlHb3Dvwc39Uu1gIoF"/></svg>
+        </span>
+        <h2 data-page-node-id="eSkWdy25j5r0KhS8aZDrcL">今日待办</h2>
+        <span class="badge-count" id="todoCount" data-page-node-id="F7AOkNmoKBHEGeA9ogMknq">0 项</span>
+      </div>
+      <div id="taskList" data-page-node-id="i5wp3XNzgOz7zQB5v0Gl3X"></div>
+      <div class="add-line" data-page-node-id="Pxbnd3fDguf5HYBuuMT6OX">
+        <input type="text" id="taskInput" placeholder="新增待办，如：提交11月滚动预测" data-page-node-id="HEXQ53Y4QgcndS37XoBjIh">
+        <input type="date" id="taskDate" data-page-node-id="nP90p3XXDkJIYFvtXuVzmZ">
+        <button class="btn" id="taskAdd" data-page-node-id="jqks9jG1EVWG3DWowiBpHM">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模块一：预算与滚动预测 -->
+  <section class="module" data-page-node-id="e7Cd8cHSWUiMe4yMHdCDAG">
+    <div class="sec-head" data-page-node-id="1lgfaDiMUymCFkddrRLBKf">
+      <span class="ic" data-page-node-id="vlBEUB1Q2UyoePyNo2UQsr">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#54dcb5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="gSGcVzBpFwUaSoHG5ioxea"><rect x="3" y="12" width="4" height="8" rx="1" data-page-node-id="Bh5ZoPiCXJkwu6ssOCKAKP"/><rect x="10" y="7" width="4" height="13" rx="1" data-page-node-id="QOR6hnxurPZZG9NdJOYpQF"/><rect x="17" y="3" width="4" height="17" rx="1" data-page-node-id="q6cZMkLhibQnVnga015HH3"/></svg>
+      </span>
+      <h2 data-page-node-id="BllEPg6EB9VkOB1CBOF39q">预算与滚动预测</h2>
+      <button class="btn btn-sm btn-ghost" data-toggle="budgetForm" data-page-node-id="nMRrsu4X0nF2tAE4wh0Gcn">＋ 新增科目</button>
+    </div>
+    <p class="desc" data-page-node-id="qlCJ1u8LunCFcdgsWJxdQb">覆盖「预算管理 + 滚动预测」：科目 / 预算 / 实际 / 执行率 / 滚动预测，超预算自动标红。</p>
+    <div class="kpi-strip" id="budgetKpis" data-page-node-id="sfndBtBol9B8Bjejv5QO85"></div>
+    <div class="chart-box" id="budgetChart" data-page-node-id="Jsy5lLV6T7MUfQMG58rgdz"></div>
+    <div class="rows" id="budgetRows" data-page-node-id="VwFs5eUQOFugWmElrX6N20"></div>
+    <div class="drawer" id="budgetForm" data-page-node-id="BsSOPlsMrMVy1fVeHP53eX">
+      <div class="form-grid" data-page-node-id="UfAWwwPrFirZ7a9hiHCO0g">
+        <div data-page-node-id="MD5BmEVeMEKmfilxIHpVA6"><label data-page-node-id="H71rmVZJtefbsFaZEhjlM9">科目名称</label><input type="text" id="bName" placeholder="如：直接材料" data-page-node-id="6HFUeghADxFtotviJkFlDY"></div>
+        <div data-page-node-id="HiP24Cx6Un1TzoIKgxwmHq"><label data-page-node-id="c9iulHoUUMyHKd72PTu0SG">收支类型</label>
+          <select id="bType" data-page-node-id="wujIY9KHjma2CjKI9ZmGNc"><option value="expense" data-page-node-id="f5QLEl0MNQsr1xkGx793yT">支出</option><option value="income" data-page-node-id="pHs08GvunqEHILLG7roKcb">收入</option></select>
+        </div>
+        <div data-page-node-id="yIxQatNcI6KzQKE3YVJyfY"><label data-page-node-id="RNrlvSsEkNaXRlpoSeB1m6">本期预算（¥）</label><input type="number" inputmode="decimal" id="bBudget" placeholder="0" data-page-node-id="viUk3zfHnx7lMXEo792GnH"></div>
+        <div data-page-node-id="HoqQMdaRVJlA3GhxkdOREo"><label data-page-node-id="AgZTOSkkt6Ga9L8lHY6iTc">本期实际（¥）</label><input type="number" inputmode="decimal" id="bActual" placeholder="0" data-page-node-id="K6DbXfMqmDxLI2WoBktwZZ"></div>
+        <div class="full" data-page-node-id="6JA6VfrcF29CZ6McEygow0"><label data-page-node-id="AkixzGYbeBJC6o2LjHbYes">滚动预测-全年（¥）</label><input type="number" inputmode="decimal" id="bForecast" placeholder="0" data-page-node-id="BI6WhTHbYczrW6PoMXiA8J"></div>
+      </div>
+      <div class="form-actions" data-page-node-id="tHr3YWi3tEGtICH03CWyGw">
+        <button class="btn" id="bSave" data-page-node-id="Qt1nMvEkhgzXJyJQrLMTLq">保存科目</button>
+        <button class="btn btn-ghost" data-toggle="budgetForm" data-page-node-id="3ZI4s5f2cooJt6LmMYgvlE">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 模块二：经营差异分析 -->
+  <section class="module" data-page-node-id="8aMdcfzx98aPDsclUU4IOp">
+    <div class="sec-head" data-page-node-id="1sBzNwL7bA2DTWqd09F0xD">
+      <span class="ic" data-page-node-id="suArUy9kDkbR9pCfj2m7L0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffbd69" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="xR7e8Kc5gwMVo4Z7KGlfg4"><polyline points="3 17 9 11 13 15 21 7" data-page-node-id="SJgvlPY7pcXezfh2b1Fnxh"/><polyline points="15 7 21 7 21 13" data-page-node-id="2WgRJWm6ALVwE1xEQsMG0e"/></svg>
+      </span>
+      <h2 data-page-node-id="eDEOXLakS1RZFlx7uRDATC">经营差异分析</h2>
+      <button class="btn btn-sm btn-ghost" data-toggle="varForm" data-page-node-id="bBxCgTNwOrlu8rG1Ag5C5a">＋ 新增指标</button>
+    </div>
+    <p class="desc" data-page-node-id="LiPOAFZMvxfVUOxdZux2k2">覆盖「经营差异分析」：指标 / 预算差异 / 同比 / 环比，|差异率|≥10% 自动判为异常并生成改进建议。</p>
+    <div class="rows" id="varRows" data-page-node-id="mVEWFhkszX0gfqT5PkhI4m"></div>
+    <button class="btn btn-amber" id="insightBtn" style="width:100%;margin-top:10px;" data-page-node-id="Zp7P6u3MCe3obmHSSXHTRz">生成经营分析要点</button>
+    <div class="insights" id="insights" data-page-node-id="I050pbcJg6CSAJWko00Egv"></div>
+    <div class="drawer" id="varForm" data-page-node-id="KU3hvWEt21iqubFfqGglmy">
+      <div class="form-grid" data-page-node-id="uiwsj09FkI97WAbP2gaHhl">
+        <div data-page-node-id="ViW6EMdJuz5NxUGOmqrBBQ"><label data-page-node-id="HVrvB1GZxen2oWI9laHYFM">指标名称</label><input type="text" id="vName" placeholder="如：营业收入" data-page-node-id="Z5nR4zm8fbwsaTgKyI63RX"></div>
+        <div data-page-node-id="zFhFeL6IPdZpYZcuFKPZhT"><label data-page-node-id="XDJYBfURI2mT9hSaRVtleX">指标类型</label>
+          <select id="vUnit" data-page-node-id="aDeo3eEsibB6pJIoGjJzn3"><option value="money" data-page-node-id="akWcf4TtZkDqieYFVD4emU">金额（¥）</option><option value="pct" data-page-node-id="PJM6eTiSAY8Doa9HTaAXSW">比率（%）</option></select>
+        </div>
+        <div data-page-node-id="aaCrF6SCjisMkqr1JXDLIL"><label data-page-node-id="MgYPiBiodqtVRkXKm6mDY2">本期实际</label><input type="number" inputmode="decimal" id="vActual" placeholder="0" data-page-node-id="SlfCjGUDSmXTZPGUdb2JGu"></div>
+        <div data-page-node-id="RTGKrCbBiHRW0CJ0gYhnOP"><label data-page-node-id="RSKn8LukDGsGhFICh2Xbte">本期预算</label><input type="number" inputmode="decimal" id="vBudget" placeholder="0" data-page-node-id="S5HJjmfrS4LBlaPffoGyvJ"></div>
+        <div data-page-node-id="KcLqXFgW8EhITDPjj1Csr3"><label data-page-node-id="vy33RHNgPYTUwKccd1jBCk">上期实际（环比基期）</label><input type="number" inputmode="decimal" id="vPrev" placeholder="0" data-page-node-id="OhUxx5eM8w1wtH1NB7FH9p"></div>
+        <div data-page-node-id="51PZFrfUB4tH3McH5Bh109"><label data-page-node-id="bLtm0sZDVSOKCeQBZL3et9">去年同期（同比基期）</label><input type="number" inputmode="decimal" id="vLast" placeholder="0" data-page-node-id="NbdSGC55LQ981OM3eokwZT"></div>
+      </div>
+      <div class="form-actions" data-page-node-id="M9DQXBfyvoYTFBcQantQzb">
+        <button class="btn" id="vSave" data-page-node-id="8dguWT0059Dl9XkqxFZBc0">保存指标</button>
+        <button class="btn btn-ghost" data-toggle="varForm" data-page-node-id="QIlsIYRh6Xl3VSvyd4OYhq">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 模块三：情景模拟与投资回报 -->
+  <section class="module" data-page-node-id="VCRiZTRjPaGAmNR20zy4H4">
+    <div class="sec-head" data-page-node-id="UkmK30VYd9WYBwWxbCATMs">
+      <span class="ic" data-page-node-id="u36DtQSArinDORAAPfufIT">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6aa8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="P7e3YY9i4xc9Xexw0s5zJE"><path d="M12 3 L21 8 L12 13 L3 8 Z" data-page-node-id="geZg463fkqQu8AUwhDQC9i"/><path d="M3 12 L12 17 L21 12" data-page-node-id="nMphN3EHiMRnSPmBBXC4jw"/><path d="M3 16 L12 21 L21 16" data-page-node-id="rlsKx6s3kgfEFjnJ7eKpFV"/></svg>
+      </span>
+      <h2 data-page-node-id="TcDlfVRXqrqcgEEZfMHHnd">情景模拟与投资回报</h2>
+      <button class="btn btn-sm btn-ghost" data-toggle="scnForm" data-page-node-id="sgWhvTzNjvw6I5DlUlw0Gc">＋ 新增情景</button>
+    </div>
+    <p class="desc" data-page-node-id="qLhxAoFSFx58jRiDVtE85N">覆盖「情景模拟 + 投资回报测算」：录入各年净现金流，自动测算 NPV / IRR / 回收期（DCF 口径）。</p>
+    <div class="rows" id="scnRows" data-page-node-id="AmiAghIpsry53eYHLrgOeM"></div>
+
+    <!-- 敏感性分析矩阵 -->
+    <div class="sens-head" data-page-node-id="sensHdr1A2b3C4d5E6">
+      <span class="ic" data-page-node-id="sensHdr2B3c4D5e6F7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffbd69" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="sensHdr3C4d5E6f7G8"><rect x="3" y="3" width="18" height="18" rx="2" data-page-node-id="sensHdr4D5e6F7g8H9"/><line x1="3" y1="9" x2="21" y2="9" data-page-node-id="sensHdr5E6f7G8h9I0"/><line x1="3" y1="15" x2="21" y2="15" data-page-node-id="sensHdr6F7g8H9i0J1"/><line x1="9" y1="3" x2="9" y2="21" data-page-node-id="sensHdr7G8h9I0j1K2"/><line x1="15" y1="3" x2="15" y2="21" data-page-node-id="sensHdr8H9i0J1k2L3"/></svg>
+      </span>
+      <h3 data-page-node-id="sensHdr9I0j1K2l3M4">敏感性分析矩阵：折现率 × 现金流情景</h3>
+    </div>
+    <p class="desc" data-page-node-id="sensDesc0J1k2L3m4N5">横轴为现金流情景（经营性流入 ±10%/±20%），纵轴为折现率（基准 ±1%/±2%），格内为对应 NPV，绿正红负。</p>
+    <select id="sensPick" data-page-node-id="sensPick1K2l3M4n5O6"></select>
+    <div class="chart-box" id="sensMatrix" data-page-node-id="sensMtx2L3m4N5o6P7"></div>
+
+    <!-- IRR 敏感性矩阵 -->
+    <div class="sens-head" data-page-node-id="irrHdr1M2n3O4p5Q6">
+      <span class="ic" data-page-node-id="irrHdr2N3o4P5q6R7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6aa8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="irrHdr3O4p5Q6r7S8"><circle cx="12" cy="12" r="9" data-page-node-id="irrHdr4P5q6R7s8T9"/><polyline points="8 13 11 16 17 9" data-page-node-id="irrHdr5Q6r7S8t9U0"/></svg>
+      </span>
+      <h3 data-page-node-id="irrHdr6R7s8T9u0V1">IRR 敏感性：现金流情景 × 目标门槛</h3>
+    </div>
+    <p class="desc" data-page-node-id="irrDesc7S8t9U0v1W2">格内为该情景下的 IRR，达成目标门槛标绿并标注「达成」，未达成标红；最右列为该门槛的达成率。</p>
+    <div class="chart-box" id="irrSensMatrix" data-page-node-id="irrMtx8T9u0V1w2X3"></div>
+    <div class="drawer" id="scnForm" data-page-node-id="YfQxkWUteK6lzGaE59rezf">
+      <div class="form-grid" data-page-node-id="W0VixUUozE6Awlu98bR95T">
+        <div data-page-node-id="RwtbNiCnlLK7hTe0CPWIMY"><label data-page-node-id="1RRuj1RLMydUMactBMP4fF">场景名称</label><input type="text" id="sName" placeholder="如：华东产线扩产-基准情景" data-page-node-id="7wq0OytG8URB2zF4r5R65G"></div>
+        <div data-page-node-id="WohBO23ps9VcmbaPMBkx6h"><label data-page-node-id="XC7lR4BnrWuUnUAMgMzROA">折现率（%，WACC）</label><input type="number" inputmode="decimal" id="sRate" placeholder="10" data-page-node-id="vLK5oKx4ZF8BWS32VCnGAd"></div>
+        <div class="full" data-page-node-id="R2BVbm9IpT1r0cyqkKCMN5"><label data-page-node-id="QxHHtMlqieiIl6iNdbJeNs">核心假设</label><input type="text" id="sAssume" placeholder="如：产能爬坡2年，第3年满产" data-page-node-id="SH1Z3X0o9eHm5oRQhNBPBc"></div>
+        <div class="full" data-page-node-id="sIRusYqIVeQaV5o16dcNwn"><label data-page-node-id="TUj1cOWCunLAUsRqVtxXii">各年净现金流（¥，逗号分隔，第0期为初始投资）</label>
+          <input type="text" id="sFlows" placeholder="-12000000, 3200000, 4500000, 5200000" data-page-node-id="eGCRhgQH8tViUq8EHIezaz">
+        </div>
+      </div>
+      <div class="form-actions" data-page-node-id="4KesiCC4TuSZF2XN7in7ia">
+        <button class="btn" id="sCalc" data-page-node-id="GnGwpIejx8FBI0DC0sOWTg">测算</button>
+        <button class="btn btn-ghost" data-toggle="scnForm" data-page-node-id="XcfudqFKdiEbjw561eP0WB">取消</button>
+      </div>
+      <div class="calc-result" id="calcResult" data-page-node-id="57K1THBFoqqewfTHIC2GLD"></div>
+    </div>
+  </section>
+
+  <!-- 模块四：资金配置与中长期规划 -->
+  <section class="module" data-page-node-id="LWq0OAn3FkvX0EbbfgRwKs">
+    <div class="sec-head" data-page-node-id="YFgL7oMA8Sw0fD2JlaaTBD">
+      <span class="ic" data-page-node-id="BCFXbQ3x6Aa3FCw96fwpTc">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#54dcb5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="1Bx02Xnoc8qpbxOAFEHgUy"><circle cx="12" cy="12" r="9" data-page-node-id="doSZkq7qRU6qIA1p37Uybc"/><path d="M12 3 A9 9 0 0 1 21 12 L12 12 Z" data-page-node-id="couSeyY5mIK9gFv4G59bx0"/></svg>
+      </span>
+      <h2 data-page-node-id="MEIhNCoK9EyebB5y1bLq5T">资金配置与中长期规划</h2>
+      <button class="btn btn-sm btn-ghost" data-toggle="allocForm" data-page-node-id="GLnjaVAuFAtGuIkeWb24SD">＋ 新增项目</button>
+    </div>
+    <p class="desc" data-page-node-id="uN4psM5ABkAW3qoWCyrXzc">覆盖「资金资源配置 + 中长期经营规划」：资金去向占比、优先级与规划里程碑一目了然。</p>
+    <div class="chart-box" id="allocChart" data-page-node-id="Q3BrB5gKUQU3hBdOx45aTk"></div>
+    <div class="rows" id="allocRows" data-page-node-id="0HOQBZmn9uPt00tbFxuMdn"></div>
+    <div class="drawer" id="allocForm" data-page-node-id="tOblSvuKGb8huAXeLVXdhx">
+      <div class="form-grid" data-page-node-id="KZjKfwSc8Z7SWesi5l2tXB">
+        <div data-page-node-id="zwceTxLk9IZHdB0USY6bw1"><label data-page-node-id="wgt1DqE5t273AwezZZfr0Q">项目/举措</label><input type="text" id="aName" placeholder="如：产线自动化改造" data-page-node-id="9z9eStrF5qz13mrXjEs9IE"></div>
+        <div data-page-node-id="jbN8BF5prAPxoAgqA7SEpb"><label data-page-node-id="ObRHtJg0zx9SUedZ34St54">资金额度（¥）</label><input type="number" inputmode="decimal" id="aAmount" placeholder="0" data-page-node-id="6kpATQroQ7QZWrYpLJg2Cb"></div>
+        <div data-page-node-id="47kDHBYFRTWPV80j03WTfL"><label data-page-node-id="hYmGvVGhv8FKADiMTyh6zU">优先级</label>
+          <select id="aPriority" data-page-node-id="RZqsGZBnGmACBTpKBX0ryc"><option value="high" data-page-node-id="R2urDK0roS5XmG42rKWTA6">高</option><option value="mid" data-page-node-id="EJQTaYOFnyrdsMfTLRij5e">中</option><option value="low" data-page-node-id="vwn3AHzjW2MKw2Z2fg7vyS">低</option></select>
+        </div>
+        <div data-page-node-id="c5cmuNsZIgUndX4EXqhwJQ"><label data-page-node-id="1xubKIpRVNqktvlgol0jQ1">规划期间</label><input type="text" id="aPeriod" placeholder="如：2026-2028" data-page-node-id="57SwCZEhBRyPwgYiPGKCaM"></div>
+        <div data-page-node-id="dLH5XjcLgBh5h5BoaIXRJa"><label data-page-node-id="OisqPuLicQCIQHnmFY2RK4">状态</label>
+          <select id="aStatus" data-page-node-id="okJ5ydKTgHR3WZo80cn4fs"><option value="规划中" data-page-node-id="Ia7WqfUHSOKX5vFVo7aBuH">规划中</option><option value="已批准" data-page-node-id="jirpvv1NYXhWV05cukOcUl">已批准</option><option value="执行中" data-page-node-id="u2vO3GCfv9Ogj7qVOdkarN">执行中</option><option value="已完成" data-page-node-id="DvZMwdCjouzAD84IkEaPni">已完成</option></select>
+        </div>
+        <div class="full" data-page-node-id="hbSpXoDoBSvJoBfi2VOU8D"><label data-page-node-id="50CS3V9Hslc072RhnTv27U">里程碑/目标</label><input type="text" id="aMilestone" placeholder="如：2027年人均产出提升20%" data-page-node-id="N5NP5a3hwBBDR2664wqXSK"></div>
+      </div>
+      <div class="form-actions" data-page-node-id="dSlNuwJP0GDHlhRUUc7CWI">
+        <button class="btn" id="aSave" data-page-node-id="fdkF967C5CxKmudo5KJJcp">保存项目</button>
+        <button class="btn btn-ghost" data-toggle="allocForm" data-page-node-id="3G0GdFGa9IHOO2lfakol2E">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 备份与同步 -->
+  <section class="backup" data-page-node-id="FwWerJDwNVqy2ZN5C7ikFp">
+    <div class="sec-head" data-page-node-id="CU0ICH2TwZbDsyNHJK5UBP">
+      <span class="ic" data-page-node-id="c44yzBi7CmAV3ZyGfSF6dQ">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93a3b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="rE5Mc0LmNuejBXBEx6OiT4"><path d="M21 12 a9 9 0 1 1 -3 -6.7" data-page-node-id="uMOdJEiCBWRqBGpl04bTQh"/><polyline points="21 3 21 9 15 9" data-page-node-id="nfMrZbj9U0gikOkUG7zBVc"/></svg>
+      </span>
+      <h2 data-page-node-id="62O7JfoynNAmaKfAB97nq2">备份与同步</h2>
+    </div>
+    <p class="desc" id="storageNote" data-page-node-id="EUBJmyMVcNt3IGWuzYF8X2">数据自动保存在本机浏览器，换设备请使用导出/导入迁移。</p>
+    <div class="b-btns" data-page-node-id="Q08KM8Hz3dNleABmH7Dler">
+      <button class="btn" id="exportBtn" data-page-node-id="u2JiponBF1lYpG8TFQsxjG">导出 JSON 备份</button>
+      <button class="btn btn-ghost" id="importBtn" data-page-node-id="gU2BinBAE5ZIHcA74fiGF3">导入恢复</button>
+      <button class="btn btn-red" id="clearSampleBtn" data-page-node-id="wqNXZzFNlrHbVMb1X4DKKQ">清空示例数据</button>
+    </div>
+    <input type="file" id="importFile" accept="application/json" style="display:none" data-page-node-id="NNGdTqDwLOdRLBR2ytWX8N">
+  </section>
+
+  <div class="foot" data-page-node-id="UwbCLihJ7A9aX1Rz7ZWmpc">战略FP&A 个人工作台 · 单文件离线版 · 支出红 / 收入绿 · 货币 ¥</div>
+</div>
+
+<script>
+/* =====================================================
+   数据层：状态、持久化、顺延逻辑
+   ===================================================== */
+var KEY = 'sfpa_workbench_v1';
+var memFallback = null; // localStorage 不可用时的内存降级
+var storageOK = true;
+
+function todayStr(){
+  var d = new Date();
+  var m = String(d.getMonth()+1).padStart(2,'0');
+  var day = String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + m + '-' + day;
+}
+
+function sampleState(){
+  var t = todayStr();
+  var y = new Date(); y.setDate(y.getDate()-1);
+  var ys = y.getFullYear() + '-' + String(y.getMonth()+1).padStart(2,'0') + '-' + String(y.getDate()).padStart(2,'0');
+  var f = new Date(); f.setDate(f.getDate()+2);
+  var fs = f.getFullYear() + '-' + String(f.getMonth()+1).padStart(2,'0') + '-' + String(f.getDate()).padStart(2,'0');
+  return {
+    tasks: [
+      {id:1, title:'提交11月滚动预测初稿', due:t, done:false, s:true},
+      {id:2, title:'复核Q4市场费用预算差异', due:ys, done:false, s:true},
+      {id:3, title:'完成华东扩产项目IRR复测', due:fs, done:false, s:true}
+    ],
+    budgets: [
+      {id:1, name:'直接材料', type:'expense', budget:12000000, actual:13200000, forecast:13500000, s:true},
+      {id:2, name:'销售收入', type:'income', budget:20000000, actual:18500000, forecast:21000000, s:true},
+      {id:3, name:'研发费用', type:'expense', budget:3000000, actual:2400000, forecast:2900000, s:true}
+    ],
+    variance: [
+      {id:1, name:'营业收入', unit:'money', actual:18500000, budget:20000000, prev:17200000, last:15000000, s:true},
+      {id:2, name:'毛利率', unit:'pct', actual:27.5, budget:30, prev:26.8, last:28.2, s:true}
+    ],
+    scenarios: [
+      {id:1, name:'华东产线扩产-基准', assume:'产能爬坡2年，第3年满产，折现率取WACC 10%', rate:10,
+       flows:[-12000000, 3200000, 4500000, 5200000, 6000000], s:true}
+    ],
+    sensId: 1,
+    allocations: [
+      {id:1, name:'产线自动化改造', amount:12000000, priority:'high', period:'2026-2028', status:'执行中', milestone:'2027年人均产出提升20%', s:true},
+      {id:2, name:'数字化MES项目', amount:8000000, priority:'high', period:'2026-2027', status:'已批准', milestone:'2026年底核心车间全覆盖', s:true},
+      {id:3, name:'海外渠道建设', amount:5000000, priority:'mid', period:'2026-2029', status:'规划中', milestone:'2028年海外收入占比达15%', s:true},
+      {id:4, name:'人才梯队建设', amount:3000000, priority:'low', period:'2026-2030', status:'规划中', milestone:'关键岗位继任者覆盖率达80%', s:true}
+    ],
+    seq: 100
+  };
+}
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ return JSON.parse(raw); }
+  }catch(e){ storageOK = false; }
+  if(memFallback){ return memFallback; }
+  return sampleState();
+}
+
+function save(){
+  try{
+    localStorage.setItem(KEY, JSON.stringify(state));
+    storageOK = true;
+  }catch(e){
+    storageOK = false;
+    memFallback = JSON.parse(JSON.stringify(state));
+  }
+  renderSaveState();
+}
+
+function nextId(){ state.seq = (state.seq||100) + 1; return state.seq; }
+
+var state = load();
+
+/* 昨日未完自动顺延 */
+(function rollTasks(){
+  var t = todayStr();
+  var changed = false;
+  state.tasks.forEach(function(task){
+    if(!task.done && task.due < t){
+      task.rolledFrom = task.rolledFrom || task.due;
+      task.due = t;
+      changed = true;
+    }
+  });
+  if(changed){ save(); }
+})();
+
+/* =====================================================
+   计算层：格式化、比率、NPV/IRR/回收期
+   ===================================================== */
+function fmtMoney(n){
+  if(n === null || n === undefined || isNaN(n)){ return '—'; }
+  return '¥' + Number(n).toLocaleString('zh-CN', {maximumFractionDigits: 0});
+}
+function fmtPct(n, digits){
+  if(n === null || n === undefined || isNaN(n) || !isFinite(n)){ return '—'; }
+  return Number(n).toFixed(digits === undefined ? 1 : digits) + '%';
+}
+function num(v){ var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function esc(s){
+  return String(s === undefined || s === null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function pctChange(cur, base){
+  if(!base){ return null; }
+  return (cur - base) / Math.abs(base) * 100;
+}
+function execRate(b){
+  if(!b.budget){ return null; }
+  return b.actual / b.budget * 100;
+}
+function isOver(b){
+  var r = execRate(b);
+  if(r === null){ return false; }
+  return b.type === 'expense' ? r > 100 : r < 100;
+}
+function npv(flows, rate){
+  var s = 0;
+  for(var i = 0; i < flows.length; i++){ s += flows[i] / Math.pow(1 + rate, i); }
+  return s;
+}
+function irr(flows){
+  var lo = -0.9, hi = 10;
+  var flo = npv(flows, lo), fhi = npv(flows, hi);
+  if(flo * fhi > 0){ return null; }
+  for(var i = 0; i < 200; i++){
+    var mid = (lo + hi) / 2;
+    var v = npv(flows, mid);
+    if(Math.abs(v) < 1e-6){ return mid; }
+    if(npv(flows, lo) * v < 0){ hi = mid; } else { lo = mid; }
+  }
+  return (lo + hi) / 2;
+}
+function payback(flows){
+  var cum = flows[0];
+  for(var i = 1; i < flows.length; i++){
+    if(flows[i] <= 0){ cum += flows[i]; continue; }
+    if(cum + flows[i] >= 0){ return (i - 1) + (-cum / flows[i]); }
+    cum += flows[i];
+  }
+  return null;
+}
+function evalScenario(scn){
+  var rate = (scn.rate || 0) / 100;
+  return {
+    npv: npv(scn.flows, rate),
+    irr: irr(scn.flows),
+    payback: payback(scn.flows)
+  };
+}
+function scenarioConclusion(scn, r){
+  var parts = [];
+  if(r.irr === null){ return '现金流结构异常（无正收益区间），建议复核假设。'; }
+  if(r.irr * 100 > (scn.rate || 0) + 2){ parts.push('IRR ' + fmtPct(r.irr*100) + ' 明显高于折现率 ' + fmtPct(scn.rate) + '，方案具备投资价值'); }
+  else if(r.irr * 100 >= (scn.rate || 0)){ parts.push('IRR ' + fmtPct(r.irr*100) + ' 略高于折现率，安全边际偏薄，建议补充敏感性分析'); }
+  else { parts.push('IRR ' + fmtPct(r.irr*100) + ' 低于折现率 ' + fmtPct(scn.rate) + '，按基准假设不建议投入'); }
+  if(r.payback !== null){ parts.push('静态回收期约 ' + r.payback.toFixed(1) + ' 年'); }
+  else { parts.push('预测期内无法收回投资'); }
+  if(r.npv > 0){ parts.push('NPV 为正（' + fmtMoney(r.npv) + '）'); }
+  else { parts.push('NPV 为负（' + fmtMoney(r.npv) + '）'); }
+  return parts.join('；') + '。';
+}
+function buildInsights(){
+  var list = [];
+  var adverse = 0;
+  state.variance.forEach(function(v){
+    var dB = pctChange(v.actual, v.budget);
+    var dY = pctChange(v.actual, v.last);
+    var dM = pctChange(v.actual, v.prev);
+    var unit = v.unit === 'pct' ? '%' : '';
+    if(dB !== null && Math.abs(dB) >= 10){
+      adverse++;
+      if(dB < 0){
+        list.push('<b>' + esc(v.name) + '</b> 低于预算 ' + fmtPct(Math.abs(dB)) + '（实际 ' + v.actual + unit + ' vs 预算 ' + v.budget + unit + '）。<span class="adv">建议：拆解量/价/结构三因素定位缺口来源，明确责任部门与追回时间表。</span>');
+      } else {
+        list.push('<b>' + esc(v.name) + '</b> 超出预算 ' + fmtPct(dB) + '。<span class="adv">建议：核实超支动因（一次性/趋势性），趋势性超支需在下期滚动预测中上调基线并追加管控。</span>');
+      }
+    }
+    if(dY !== null && dY <= -10){
+      list.push('<b>' + esc(v.name) + '</b> 同比下滑 ' + fmtPct(Math.abs(dY)) + '。<span class="adv">建议：对比行业大盘判断是个体问题还是系统性回落，必要时启动情景预案。</span>');
+    }
+    if(dM !== null && dM >= 10){
+      list.push('<b>' + esc(v.name) + '</b> 环比改善 ' + fmtPct(dM) + '，向好趋势建议确认可持续性。');
+    }
+  });
+  if(!state.variance.length){ list.push('暂无经营指标数据，请先新增指标。'); }
+  else if(!adverse){ list.push('各项指标均在预算偏差 ±10% 容忍带内，经营节奏正常，建议按原计划推进。'); }
+  return list;
+}
+
+/* =====================================================
+   渲染层：只读 state，互不调用，统一由 refreshAll 调度
+   ===================================================== */
+function renderSaveState(){
+  var el = document.getElementById('saveState');
+  var now = new Date();
+  var hm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  el.innerHTML = storageOK
+    ? '数据存储：<b>本地已保存 ' + hm + '</b>'
+    : '数据存储：<b style="color:var(--amber)">内存模式（浏览器禁用了本地存储）</b>';
+}
+
+function renderToday(){
+  document.getElementById('todayDate').textContent =
+    todayStr() + ' · ' + ['周日','周一','周二','周三','周四','周五','周六'][new Date().getDay()];
+  var t = todayStr();
+  var open = state.tasks.filter(function(x){ return !x.done; });
+  document.getElementById('todoCount').textContent = open.length + ' 项';
+  var box = document.getElementById('taskList');
+  if(!state.tasks.length){
+    box.innerHTML = '<div class="empty">暂无待办，今天可以专注分析了</div>';
+    return;
+  }
+  var sorted = state.tasks.slice().sort(function(a,b){
+    if(a.done !== b.done){ return a.done ? 1 : -1; }
+    return a.due < b.due ? -1 : 1;
+  });
+  box.innerHTML = sorted.map(function(task){
+    var overdue = !task.done && task.due < t;
+    var cls = 'task-row' + (overdue ? ' overdue' : '') + (task.done ? ' done' : '');
+    var sub = '<span>截止 ' + task.due + '</span>';
+    if(overdue){ sub += '<span class="tag-overdue">已逾期</span>'; }
+    if(task.rolledFrom && !task.done){ sub += '<span class="tag-rolled">顺延自 ' + task.rolledFrom + '</span>'; }
+    return '<div class="' + cls + '">'
+      + '<button class="t-check" data-task-toggle="' + task.id + '" aria-label="完成">'
+      + (task.done
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 10 18.5 20 6"/></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>')
+      + '</button>'
+      + '<div class="t-body"><div class="t-title">' + esc(task.title) + '</div><div class="t-sub">' + sub + '</div></div>'
+      + '<button class="t-del" data-task-del="' + task.id + '" aria-label="删除">×</button>'
+      + '</div>';
+  }).join('');
+}
+
+function renderBudget(){
+  var list = state.budgets;
+  var over = list.filter(isOver);
+  var expB = 0, expA = 0, incB = 0, incA = 0;
+  list.forEach(function(b){
+    if(b.type === 'expense'){ expB += b.budget; expA += b.actual; }
+    else { incB += b.budget; incA += b.actual; }
+  });
+  var expRate = expB ? expA / expB * 100 : null;
+  document.getElementById('budgetKpis').innerHTML =
+    '<div class="kpi"><div class="k-label">支出预算执行率</div><div class="k-val" style="color:' + (expRate !== null && expRate > 100 ? 'var(--red)' : 'var(--teal)') + '">' + fmtPct(expRate) + '</div></div>'
+    + '<div class="kpi"><div class="k-label">收入达成率</div><div class="k-val" style="color:' + (incB && incA < incB ? 'var(--amber)' : 'var(--green)') + '">' + (incB ? fmtPct(incA/incB*100) : '—') + '</div></div>'
+    + '<div class="kpi"><div class="k-label">预警科目</div><div class="k-val" style="color:' + (over.length ? 'var(--red)' : 'var(--teal)') + '">' + over.length + ' 项</div></div>';
+
+  /* SVG 对比图 */
+  var chart = document.getElementById('budgetChart');
+  if(!list.length){
+    chart.innerHTML = '<div class="empty">暂无预算数据</div>';
+  } else {
+    var max = 0;
+    list.forEach(function(b){ max = Math.max(max, b.budget, b.actual); });
+    var rowH = 46, padL = 96, padR = 16, W = 680, barMaxW = W - padL - padR;
+    var H = list.length * rowH + 30;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="min-width:520px">';
+    s += '<text x="' + padL + '" y="14" fill="#93a3b3" font-size="11">预算</text>';
+    s += '<rect x="' + (padL + 32) + '" y="6" width="18" height="8" rx="2" fill="#3a4a5c"/>';
+    s += '<text x="' + (padL + 100) + '" y="14" fill="#93a3b3" font-size="11">实际</text>';
+    s += '<rect x="' + (padL + 132) + '" y="6" width="18" height="8" rx="2" fill="#54dcb5"/>';
+    s += '<rect x="' + (padL + 154) + '" y="6" width="18" height="8" rx="2" fill="#ff6b6b"/>';
+    s += '<text x="' + (padL + 176) + '" y="14" fill="#93a3b3" font-size="11">实际（预警）</text>';
+    list.forEach(function(b, i){
+      var y = 24 + i * rowH;
+      var wB = max ? b.budget / max * barMaxW : 0;
+      var wA = max ? b.actual / max * barMaxW : 0;
+      var aColor = isOver(b) ? '#ff6b6b' : '#54dcb5';
+      s += '<text x="' + (padL - 8) + '" y="' + (y + 16) + '" fill="#e8eef4" font-size="12.5" text-anchor="end">' + esc(b.name) + '</text>';
+      s += '<rect x="' + padL + '" y="' + y + '" width="' + Math.max(wB,1) + '" height="10" rx="3" fill="#3a4a5c"/>';
+      s += '<rect x="' + padL + '" y="' + (y + 14) + '" width="' + Math.max(wA,1) + '" height="10" rx="3" fill="' + aColor + '"/>';
+      var r = execRate(b);
+      s += '<text x="' + (padL + Math.max(wA, wB) + 8) + '" y="' + (y + 21) + '" fill="' + (isOver(b) ? '#ff6b6b' : '#93a3b3') + '" font-size="11">' + fmtPct(r, 0) + '</text>';
+    });
+    s += '</svg>';
+    chart.innerHTML = s;
+  }
+
+  var rows = document.getElementById('budgetRows');
+  if(!list.length){ rows.innerHTML = ''; return; }
+  rows.innerHTML = list.map(function(b){
+    var r = execRate(b);
+    var overB = isOver(b);
+    var diff = b.forecast - b.budget;
+    return '<div class="data-row' + (overB ? ' alert' : '') + '">'
+      + '<div class="r-head"><span class="r-name">' + esc(b.name) + '</span>'
+      + '<span class="r-flags">'
+      + '<span class="pill ' + (b.type === 'expense' ? 'red' : 'green') + '">' + (b.type === 'expense' ? '支出' : '收入') + '</span>'
+      + (overB ? '<span class="pill red">' + (b.type === 'expense' ? '超预算' : '未达标') + '</span>' : '<span class="pill teal">正常</span>')
+      + '</span></div>'
+      + '<div class="r-grid">'
+      + '<div class="cell"><div class="c-label">预算</div><div class="c-val">' + fmtMoney(b.budget) + '</div></div>'
+      + '<div class="cell"><div class="c-label">实际</div><div class="c-val">' + fmtMoney(b.actual) + '</div></div>'
+      + '<div class="cell"><div class="c-label">执行率</div><div class="c-val" style="color:' + (overB ? 'var(--red)' : 'var(--teal)') + '">' + fmtPct(r) + '</div></div>'
+      + '<div class="cell"><div class="c-label">滚动预测-全年</div><div class="c-val">' + fmtMoney(b.forecast) + '</div></div>'
+      + '<div class="cell"><div class="c-label">预测 vs 预算</div><div class="c-val ' + (diff < 0 ? 'num-neg' : 'num-pos') + '">' + (diff >= 0 ? '+' : '') + fmtMoney(diff) + '</div></div>'
+      + '</div>'
+      + '<div class="r-actions"><button class="btn btn-sm btn-red" data-budget-del="' + b.id + '">删除</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderVariance(){
+  var list = state.variance;
+  var rows = document.getElementById('varRows');
+  if(!list.length){ rows.innerHTML = '<div class="empty">暂无经营指标</div>'; return; }
+  rows.innerHTML = list.map(function(v){
+    var dB = pctChange(v.actual, v.budget);
+    var dY = pctChange(v.actual, v.last);
+    var dM = pctChange(v.actual, v.prev);
+    var abnormal = dB !== null && Math.abs(dB) >= 10;
+    var isM = v.unit === 'money';
+    var fmtV = function(x){ return isM ? fmtMoney(x) : Number(x).toFixed(1) + '%'; };
+    var fmtD = function(x){
+      if(x === null){ return '—'; }
+      var cls = x < 0 ? 'num-neg' : 'num-pos';
+      return '<span class="' + cls + '">' + (x > 0 ? '+' : '') + fmtPct(x) + '</span>';
+    };
+    return '<div class="data-row' + (abnormal ? ' alert' : '') + '">'
+      + '<div class="r-head"><span class="r-name">' + esc(v.name) + '</span>'
+      + '<span class="r-flags">' + (abnormal ? '<span class="pill red">异常</span>' : '<span class="pill teal">正常</span>') + '</span></div>'
+      + '<div class="r-grid">'
+      + '<div class="cell"><div class="c-label">本期实际</div><div class="c-val">' + fmtV(v.actual) + '</div></div>'
+      + '<div class="cell"><div class="c-label">本期预算</div><div class="c-val">' + fmtV(v.budget) + '</div></div>'
+      + '<div class="cell"><div class="c-label">预算差异率</div><div class="c-val">' + fmtD(dB) + '</div></div>'
+      + '<div class="cell"><div class="c-label">同比</div><div class="c-val">' + fmtD(dY) + '</div></div>'
+      + '<div class="cell"><div class="c-label">环比</div><div class="c-val">' + fmtD(dM) + '</div></div>'
+      + '</div>'
+      + '<div class="r-actions"><button class="btn btn-sm btn-red" data-var-del="' + v.id + '">删除</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderScenarios(){
+  var list = state.scenarios;
+  var rows = document.getElementById('scnRows');
+  if(!list.length){ rows.innerHTML = '<div class="empty">暂无测算情景</div>'; return; }
+  rows.innerHTML = list.map(function(scn){
+    var r = evalScenario(scn);
+    var good = r.irr !== null && r.irr * 100 >= (scn.rate || 0);
+    return '<div class="data-row">'
+      + '<div class="r-head"><span class="r-name">' + esc(scn.name) + '</span>'
+      + '<span class="r-flags"><span class="pill ' + (good ? 'teal' : 'red') + '">' + (good ? '可投' : '谨慎') + '</span></span></div>'
+      + '<div class="r-grid">'
+      + '<div class="cell"><div class="c-label">NPV @ ' + fmtPct(scn.rate, 0) + '</div><div class="c-val ' + (r.npv >= 0 ? 'num-pos' : 'num-neg') + '">' + fmtMoney(r.npv) + '</div></div>'
+      + '<div class="cell"><div class="c-label">IRR</div><div class="c-val" style="color:' + (good ? 'var(--teal)' : 'var(--red)') + '">' + (r.irr === null ? '—' : fmtPct(r.irr * 100)) + '</div></div>'
+      + '<div class="cell"><div class="c-label">静态回收期</div><div class="c-val">' + (r.payback === null ? '—' : r.payback.toFixed(1) + ' 年') + '</div></div>'
+      + '</div>'
+      + '<div class="r-note"><b>假设：</b>' + esc(scn.assume || '—') + '</div>'
+      + '<div class="r-note"><b>结论：</b>' + esc(scenarioConclusion(scn, r)) + '</div>'
+      + '<div class="r-actions"><button class="btn btn-sm btn-red" data-scn-del="' + scn.id + '">删除</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderAlloc(){
+  var list = state.allocations;
+  var chart = document.getElementById('allocChart');
+  var total = 0;
+  list.forEach(function(a){ total += a.amount; });
+  var colors = {high:'#ff6b6b', mid:'#ffbd69', low:'#54dcb5'};
+  var names = {high:'高', mid:'中', low:'低'};
+  if(!list.length || !total){
+    chart.innerHTML = '<div class="empty">暂无资金配置数据</div>';
+  } else {
+    var R = 60, C = 2 * Math.PI * R, off = 0;
+    var s = '<svg viewBox="0 0 680 190" width="100%" style="min-width:420px">';
+    s += '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="#27374a" stroke-width="26"/>';
+    list.forEach(function(a){
+      var frac = a.amount / total;
+      var len = frac * C;
+      s += '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="' + colors[a.priority] + '" stroke-width="26"'
+        + ' stroke-dasharray="' + len + ' ' + (C - len) + '" stroke-dashoffset="' + (-off) + '"'
+        + ' transform="rotate(-90 95 95)"/>';
+      off += len;
+    });
+    s += '<text x="95" y="90" fill="#e8eef4" font-size="15" font-weight="700" text-anchor="middle">' + fmtMoney(total) + '</text>';
+    s += '<text x="95" y="110" fill="#93a3b3" font-size="11" text-anchor="middle">资金总额</text>';
+    list.forEach(function(a, i){
+      var y = 26 + i * 34;
+      s += '<rect x="200" y="' + (y - 10) + '" width="12" height="12" rx="3" fill="' + colors[a.priority] + '"/>';
+      s += '<text x="220" y="' + y + '" fill="#e8eef4" font-size="13">' + esc(a.name) + '</text>';
+      s += '<text x="470" y="' + y + '" fill="#93a3b3" font-size="12">' + fmtMoney(a.amount) + '</text>';
+      s += '<text x="640" y="' + y + '" fill="#54dcb5" font-size="12" text-anchor="end">' + (a.amount / total * 100).toFixed(1) + '%</text>';
+    });
+    s += '</svg>';
+    chart.innerHTML = s;
+  }
+  var rows = document.getElementById('allocRows');
+  if(!list.length){ rows.innerHTML = ''; return; }
+  rows.innerHTML = list.map(function(a){
+    var share = total ? a.amount / total * 100 : null;
+    return '<div class="data-row">'
+      + '<div class="r-head"><span class="r-name">' + esc(a.name) + '</span>'
+      + '<span class="r-flags">'
+      + '<span class="pill ' + (a.priority === 'high' ? 'red' : a.priority === 'mid' ? 'amber' : 'teal') + '">优先级·' + names[a.priority] + '</span>'
+      + '<span class="pill">' + esc(a.status) + '</span>'
+      + '</span></div>'
+      + '<div class="r-grid">'
+      + '<div class="cell"><div class="c-label">资金额度</div><div class="c-val">' + fmtMoney(a.amount) + '</div></div>'
+      + '<div class="cell"><div class="c-label">占比</div><div class="c-val" style="color:var(--teal)">' + fmtPct(share) + '</div></div>'
+      + '<div class="cell"><div class="c-label">规划期间</div><div class="c-val">' + esc(a.period) + '</div></div>'
+      + '</div>'
+      + '<div class="r-note"><b>里程碑：</b>' + esc(a.milestone || '—') + '</div>'
+      + '<div class="r-actions"><button class="btn btn-sm btn-red" data-alloc-del="' + a.id + '">删除</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+/* 敏感性矩阵：现金流情景 = 经营性流入统一调整（第0期初始投资不变） */
+function sensFlows(flows, scale){
+  return flows.map(function(f, i){ return i === 0 ? f : f * (1 + scale); });
+}
+
+function renderSensitivity(){
+  var sel = document.getElementById('sensPick');
+  var box = document.getElementById('sensMatrix');
+  var list = state.scenarios;
+  if(!list.length){
+    sel.innerHTML = '<option value="">（请先保存测算情景）</option>';
+    box.innerHTML = '<div class="empty">暂无情景，先在上方新增并保存测算情景</div>';
+    return;
+  }
+  sel.innerHTML = list.map(function(s){
+    return '<option value="' + s.id + '">' + esc(s.name) + '</option>';
+  }).join('');
+  if(!state.sensId || !list.some(function(s){ return s.id === state.sensId; })){
+    state.sensId = list[0].id;
+  }
+  sel.value = state.sensId;
+  var scn = list.filter(function(s){ return s.id === state.sensId; })[0];
+  var baseRate = scn.rate || 0;
+  var rateSteps = [-2, -1, 0, 1, 2];
+  var scales = [-0.2, -0.1, 0, 0.1, 0.2];
+  var scaleNames = {'-0.2':'悲观 -20%', '-0.1':'保守 -10%', '0':'基准', '0.1':'乐观 +10%', '0.2':'积极 +20%'};
+
+  var s = '<table class="sens-table"><tr>'
+    + '<th class="corner">折现率 \\ 现金流情景</th>'
+    + scales.map(function(sc){ return '<th>' + scaleNames[String(sc)] + '</th>'; }).join('')
+    + '</tr>';
+  var negCount = 0, totalCells = 0;
+  rateSteps.forEach(function(dr){
+    var rate = (baseRate + dr) / 100;
+    s += '<tr><th>' + (baseRate + dr).toFixed(1) + '%' + (dr === 0 ? '（基准）' : '') + '</th>';
+    scales.forEach(function(sc){
+      var v = npv(sensFlows(scn.flows, sc), rate);
+      totalCells++;
+      if(v < 0){ negCount++; }
+      var cls = (v >= 0 ? 'pos' : 'neg') + (dr === 0 && sc === 0 ? ' base' : '');
+      s += '<td class="' + cls + '">' + fmtMoney(v) + '</td>';
+    });
+    s += '</tr>';
+  });
+  s += '</table>';
+  /* 结论行 */
+  var r0 = evalScenario(scn);
+  var safeGrid = (negCount === 0);
+  var midRow = npv(sensFlows(scn.flows, 0), (baseRate - 1) / 100) >= 0;
+  s += '<div class="sens-legend">'
+    + '<span><b>橙色框</b> 基准组合</span><span><span style="color:var(--teal)">绿</span> NPV≥0</span><span><span style="color:var(--red)">红</span> NPV&lt;0</span>'
+    + '</div>'
+    + '<div class="r-note" style="margin-top:6px"><b>矩阵解读：</b>'
+    + (safeGrid
+        ? '全部 25 个组合 NPV 均为正，方案对折现率与现金流波动均不敏感，抗风险能力强。'
+        : (midRow
+            ? '悲观现金流下出现 NPV 为负的组合（' + negCount + '/' + totalCells + '），项目整体可行但安全边际一般，建议锁定关键假设（产能爬坡、售价）后再推进。'
+            : '负 NPV 组合达 ' + negCount + '/' + totalCells + '，方案对假设高度敏感，基准情景下即需谨慎，建议先压缩初始投资或改善现金流结构再上会。'))
+    + '</div>';
+  box.innerHTML = s;
+}
+
+/* 抗风险缓冲带：现金流较基准下滑多少时 IRR 仍能覆盖 WACC 门槛 */
+function irrBuffer(scn){
+  var hurdle = (scn.rate || 0) / 100;
+  var pass = -1;
+  for(var sc = 0; sc >= -0.60; sc -= 0.01){
+    var r = irr(sensFlows(scn.flows, sc));
+    if(r !== null && r >= hurdle){ pass = sc; }
+    else { break; }
+  }
+  return pass;
+}
+
+function renderIrrSensitivity(){
+  var box = document.getElementById('irrSensMatrix');
+  var list = state.scenarios;
+  if(!list.length){
+    box.innerHTML = '<div class="empty">暂无情景，先在上方新增并保存测算情景</div>';
+    return;
+  }
+  var scn = list.filter(function(x){ return x.id === state.sensId; })[0] || list[0];
+  var base = scn.rate || 0;
+  var steps = [0, 2, 5, 10, 15];
+  var scales = [-0.2, -0.1, 0, 0.1, 0.2];
+  var scaleNames = {'-0.2':'悲观 -20%', '-0.1':'保守 -10%', '0':'基准', '0.1':'乐观 +10%', '0.2':'积极 +20%'};
+
+  var s = '<table class="sens-table"><tr><th class="corner">目标 IRR 门槛 \\ 现金流情景</th>'
+    + scales.map(function(sc){ return '<th>' + scaleNames[String(sc)] + '</th>'; }).join('')
+    + '<th>达成率</th></tr>';
+  var hitsAll = 0, cellsAll = 0;
+  steps.forEach(function(d, i){
+    var h = base + d;
+    var hits = 0;
+    s += '<tr><th>' + h.toFixed(1) + '%' + (d === 0 ? '（WACC）' : '（+' + d + '%）') + '</th>';
+    scales.forEach(function(sc){
+      var r = irr(sensFlows(scn.flows, sc));
+      cellsAll++;
+      var ok = r !== null && r * 100 >= h;
+      if(ok){ hits++; hitsAll++; }
+      s += '<td class="' + (r === null ? 'na' : (ok ? 'hit' : 'miss')) + '">'
+        + (r === null ? '—' : fmtPct(r * 100))
+        + '<span class="sub">' + (r === null ? '不可解' : (ok ? '达成' : '未达')) + '</span></td>';
+    });
+    s += '<td class="ratecol">' + (hits / 5 * 100).toFixed(0) + '%</td></tr>';
+  });
+  s += '</table>';
+
+  var rBase = irr(scn.flows);
+  var buf = irrBuffer(scn);
+  var bufferText;
+  if(rBase === null){
+    bufferText = '基准情景现金流无正收益区间，IRR 不可解，建议复核假设与现金流结构。';
+  } else if(buf <= -0.005){
+    bufferText = '基准 IRR ' + fmtPct(rBase * 100) + '，现金流较基准下滑 <b>' + (Math.abs(buf) * 100).toFixed(0) + '%</b> 时 IRR 仍可覆盖 WACC 门槛（' + base.toFixed(1) + '%）。';
+  } else if(rBase * 100 >= base){
+    bufferText = '基准 IRR ' + fmtPct(rBase * 100) + ' 仅勉强覆盖 WACC 门槛，<b>无下行缓冲</b>，现金流一旦低于基准即不达标。';
+  } else {
+    bufferText = '基准 IRR ' + fmtPct(rBase * 100) + ' 低于 WACC 门槛 ' + base.toFixed(1) + '%，任何下行情景均不达标，建议压缩初始投资或延后投入。';
+  }
+  s += '<div class="irr-buffer"><b>抗风险缓冲带：</b>' + bufferText
+    + '</div>';
+  s += '<div class="sens-legend">'
+    + '<span><span style="color:var(--teal)">绿</span> 达成门槛</span>'
+    + '<span><span style="color:var(--red)">红</span> 未达成</span>'
+    + '<span><b>琥珀列</b> 该门槛达成率</span>'
+    + '<span><b>整体达成率</b> ' + (cellsAll ? hitsAll / cellsAll * 100 : 0).toFixed(0) + '%（' + hitsAll + '/' + cellsAll + '）</span>'
+    + '</div>';
+  box.innerHTML = s;
+}
+
+function refreshAll(){
+  renderSaveState();
+  renderToday();
+  renderBudget();
+  renderVariance();
+  renderScenarios();
+  renderSensitivity();
+  renderIrrSensitivity();
+  renderAlloc();
+}
+
+/* =====================================================
+   事件层：唯一允许 改state → save → refreshAll 的地方
+   ===================================================== */
+document.body.addEventListener('click', function(e){
+  var el = e.target.closest('[data-toggle],[data-task-toggle],[data-task-del],[data-budget-del],[data-var-del],[data-scn-del],[data-alloc-del]');
+  if(!el){ return; }
+  var d = el.dataset;
+  if(d.toggle){
+    document.getElementById(d.toggle).classList.toggle('open');
+    return;
+  }
+  if(d.taskToggle){
+    var id = Number(d.taskToggle);
+    state.tasks.forEach(function(t){ if(t.id === id){ t.done = !t.done; if(t.done){ delete t.rolledFrom; } } });
+  }
+  if(d.taskDel){ state.tasks = state.tasks.filter(function(t){ return t.id !== Number(d.taskDel); }); }
+  if(d.budgetDel){ state.budgets = state.budgets.filter(function(b){ return b.id !== Number(d.budgetDel); }); }
+  if(d.varDel){ state.variance = state.variance.filter(function(v){ return v.id !== Number(d.varDel); }); }
+  if(d.scnDel){ state.scenarios = state.scenarios.filter(function(s){ return s.id !== Number(d.scnDel); }); }
+  if(d.allocDel){ state.allocations = state.allocations.filter(function(a){ return a.id !== Number(d.allocDel); }); }
+  save();
+  refreshAll();
+});
+
+/* 待办新增 */
+document.getElementById('taskDate').value = todayStr();
+document.getElementById('taskAdd').addEventListener('click', function(){
+  var title = document.getElementById('taskInput').value.trim();
+  if(!title){ return; }
+  state.tasks.push({id: nextId(), title: title, due: document.getElementById('taskDate').value || todayStr(), done: false});
+  document.getElementById('taskInput').value = '';
+  save(); refreshAll();
+});
+document.getElementById('taskInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ document.getElementById('taskAdd').click(); }
+});
+
+/* 预算新增 */
+document.getElementById('bSave').addEventListener('click', function(){
+  var name = document.getElementById('bName').value.trim();
+  if(!name){ return; }
+  state.budgets.push({
+    id: nextId(), name: name,
+    type: document.getElementById('bType').value,
+    budget: num(document.getElementById('bBudget').value),
+    actual: num(document.getElementById('bActual').value),
+    forecast: num(document.getElementById('bForecast').value)
+  });
+  ['bName','bBudget','bActual','bForecast'].forEach(function(i){ document.getElementById(i).value = ''; });
+  document.getElementById('budgetForm').classList.remove('open');
+  save(); refreshAll();
+});
+
+/* 指标新增 */
+document.getElementById('vSave').addEventListener('click', function(){
+  var name = document.getElementById('vName').value.trim();
+  if(!name){ return; }
+  state.variance.push({
+    id: nextId(), name: name,
+    unit: document.getElementById('vUnit').value,
+    actual: num(document.getElementById('vActual').value),
+    budget: num(document.getElementById('vBudget').value),
+    prev: num(document.getElementById('vPrev').value),
+    last: num(document.getElementById('vLast').value)
+  });
+  ['vName','vActual','vBudget','vPrev','vLast'].forEach(function(i){ document.getElementById(i).value = ''; });
+  document.getElementById('varForm').classList.remove('open');
+  save(); refreshAll();
+});
+
+/* 情景测算 */
+var pendingScenario = null;
+document.getElementById('sCalc').addEventListener('click', function(){
+  var btn = document.getElementById('sCalc');
+  if(pendingScenario){
+    state.sensId = pendingScenario.id;
+    state.scenarios.push(pendingScenario);
+    pendingScenario = null;
+    btn.textContent = '测算';
+    document.getElementById('calcResult').classList.remove('show');
+    ['sName','sRate','sAssume','sFlows'].forEach(function(i){ document.getElementById(i).value = ''; });
+    document.getElementById('scnForm').classList.remove('open');
+    save(); refreshAll();
+    return;
+  }
+  var name = document.getElementById('sName').value.trim();
+  var flowsRaw = document.getElementById('sFlows').value.split(/[,，]/).map(function(x){ return parseFloat(x.trim()); }).filter(function(x){ return !isNaN(x); });
+  if(!name || flowsRaw.length < 2){ return; }
+  var scn = {
+    id: nextId(), name: name,
+    assume: document.getElementById('sAssume').value.trim(),
+    rate: num(document.getElementById('sRate').value) || 10,
+    flows: flowsRaw
+  };
+  var r = evalScenario(scn);
+  var box = document.getElementById('calcResult');
+  box.innerHTML = '<div class="calc-grid">'
+    + '<div class="kpi"><div class="k-label">NPV</div><div class="k-val ' + (r.npv >= 0 ? 'num-pos' : 'num-neg') + '">' + fmtMoney(r.npv) + '</div></div>'
+    + '<div class="kpi"><div class="k-label">IRR</div><div class="k-val" style="color:var(--teal)">' + (r.irr === null ? '—' : fmtPct(r.irr * 100)) + '</div></div>'
+    + '<div class="kpi"><div class="k-label">静态回收期</div><div class="k-val">' + (r.payback === null ? '—' : r.payback.toFixed(1) + ' 年') + '</div></div>'
+    + '</div>'
+    + '<div class="r-note" style="margin-top:10px"><b>结论：</b>' + esc(scenarioConclusion(scn, r)) + '</div>';
+  box.classList.add('show');
+  pendingScenario = scn;
+  btn.textContent = '保存该情景';
+});
+
+/* 敏感性矩阵切换情景 */
+document.getElementById('sensPick').addEventListener('change', function(e){
+  state.sensId = Number(e.target.value);
+  save();
+  refreshAll();
+});
+
+/* 资金配置新增 */
+document.getElementById('aSave').addEventListener('click', function(){
+  var name = document.getElementById('aName').value.trim();
+  if(!name){ return; }
+  state.allocations.push({
+    id: nextId(), name: name,
+    amount: num(document.getElementById('aAmount').value),
+    priority: document.getElementById('aPriority').value,
+    period: document.getElementById('aPeriod').value.trim() || '—',
+    status: document.getElementById('aStatus').value,
+    milestone: document.getElementById('aMilestone').value.trim()
+  });
+  ['aName','aAmount','aPeriod','aMilestone'].forEach(function(i){ document.getElementById(i).value = ''; });
+  document.getElementById('allocForm').classList.remove('open');
+  save(); refreshAll();
+});
+
+/* 经营分析要点 */
+document.getElementById('insightBtn').addEventListener('click', function(){
+  var box = document.getElementById('insights');
+  var list = buildInsights();
+  box.innerHTML = '<h3>经营分析要点（' + todayStr() + '）</h3><ul>'
+    + list.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+  box.classList.toggle('show');
+});
+
+/* 备份与恢复 */
+document.getElementById('exportBtn').addEventListener('click', function(){
+  var blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fpna-backup-' + todayStr().replace(/-/g, '') + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById('importBtn').addEventListener('click', function(){
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', function(e){
+  var f = e.target.files[0];
+  if(!f){ return; }
+  var reader = new FileReader();
+  reader.onload = function(){
+    try{
+      var data = JSON.parse(reader.result);
+      if(!data || !Array.isArray(data.tasks)){ throw new Error('bad'); }
+      state = data;
+      save(); refreshAll();
+    }catch(err){
+      alert('备份文件格式不正确，导入失败。');
+    }
+  };
+  reader.readAsText(f);
+  e.target.value = '';
+});
+document.getElementById('clearSampleBtn').addEventListener('click', function(){
+  ['tasks','budgets','variance','scenarios','allocations'].forEach(function(k){
+    state[k] = state[k].filter(function(x){ return !x.s; });
+  });
+  save(); refreshAll();
+});
+
+/* 启动 */
+refreshAll();
+</script>
+</body>
+</html>
